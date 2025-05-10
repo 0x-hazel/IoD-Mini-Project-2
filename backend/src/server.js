@@ -1,8 +1,7 @@
-import express from "express";
-import { createLobby } from "./lobby.js";
+const express = require("express");
+const createLobby = require("./lobby");
 
 const app = express();
-const port = 3000;
 
 const state = new Object(null);
 state.lobbies = {};
@@ -22,15 +21,44 @@ app
             lobby = createLobby();
         }
         lobbies[lobby.roomCode] = lobby;
-        res.json({ session: `${lobby.roomCode}:${lobby.playerJoin()}` });
+        res.json({
+            session: `${lobby.roomCode}:${lobby.playerJoin()}`,
+            playing: "x",
+        });
+    })
+    .post("/api/join-lobby/:lobby", (req, res) => {
+        const lobby = req.app.locals.state.lobbies[req.params.lobby];
+        if (lobby == undefined) {
+            res.json({ error: "Lobby not found" });
+        } else {
+            if (lobby.players < 2) {
+                res.json({
+                    session: `${lobby.roomCode}:${lobby.playerJoin()}`,
+                    playing: "o",
+                });
+            } else {
+                res.json({ error: "Lobby is full" });
+            }
+        }
     })
     .get("/api/lobby/:lobby", (req, res) => {
         const lobby = req.app.locals.state.lobbies[req.params.lobby];
         if (!lobby) {
             res.json({ exists: false });
         } else {
-            res.json(lobby);
+            if (lobby.isWaiting) {
+                res.json({
+                    exists: true,
+                    isWaiting: true,
+                });
+            } else {
+                res.json({
+                    exists: true,
+                    isWaiting: false,
+                    turn: lobby.currentPlayer ? "x" : "o",
+                });
+            }
         }
     });
 
-app.listen(port);
+module.exports = app;

@@ -11,6 +11,7 @@ export default function NewGameButton() {
     },
     onSuccess: (response) => {
       console.log(response.data);
+      localStorage.setItem("session", response.data.session);
       const [lobby, player] = response.data.session.split(":");
       console.log("Player ", player);
       navigate(`/play/${lobby}`);
