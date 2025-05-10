@@ -55,9 +55,33 @@ app
                 res.json({
                     exists: true,
                     isWaiting: false,
-                    turn: lobby.currentPlayer ? "x" : "o",
+                    turn: (lobby.currentPlayer == 0) ? "x" : "o",
+                    boardState: lobby.boardState,
                 });
             }
+        }
+    })
+    .post("/api/make-move/:lobby", (req, res) => {
+        const user = req.query.player;
+        const position = Number(req.query.position);
+        const lobby = req.app.locals.state.lobbies[req.params.lobby];
+        if (
+            lobby.playerCodes[lobby.currentPlayer] == user && !lobby.isWaiting
+        ) {
+            if (position && position < 9 && position >= 0) {
+                if (lobby.boardState[position] != "") {
+                    res.json({ error: "This position is already occupied" });
+                } else {
+                    lobby.boardState[position] = (lobby.currentPlayer == 0)
+                        ? "x"
+                        : "o";
+                    res.json({ boardState: lobby.boardState });
+                }
+            } else {
+                res.json({ error: "Position is out of range" });
+            }
+        } else {
+            res.json({ error: "It is not your turn" });
         }
     });
 
