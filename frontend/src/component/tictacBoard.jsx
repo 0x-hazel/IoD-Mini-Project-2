@@ -1,6 +1,9 @@
 import TicTac from "./ticTac";
 
-export function TicTacBoard() {
+// boardState: ('x' | 'o')[9]
+// isSelectable: boolean
+// changeTo: ('x' | 'o')
+export function TicTacBoard({ boardState, isSelectable, changeTo }) {
   return (
     <div className="grid grid-rows-3 grid-cols-3">
       <div className="border-base-content border-r border-b">
