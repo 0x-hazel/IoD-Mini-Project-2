@@ -1,3 +1,4 @@
+import JoinGameButton from "../component/joinGameButton";
 import NewGameButton from "../component/newGameButton";
 
 export default function Index() {
@@ -8,8 +9,7 @@ export default function Index() {
           <div className="max-w-md"></div>
           <h1 className="text-6xl font-bold">Tic-Tac-Toe!</h1>
           <NewGameButton />
-          <button className="btn btn-primary">Join Game</button>
-          {/* New Game Modal dialog that doesn't work in its own component for some reason */}
+          <JoinGameButton />
         </div>
       </div>
     </>

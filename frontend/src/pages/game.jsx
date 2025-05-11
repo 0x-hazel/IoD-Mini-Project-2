@@ -11,7 +11,7 @@ const fetchLobbyData = (queryData) => {
 };
 
 const makeMove = (position) => {
-  const [lobby, player] = localStorage.getItem("session")?.split(":") || [
+  const [lobby, player] = sessionStorage.getItem("session")?.split(":") || [
     undefined,
     undefined,
   ];
@@ -22,6 +22,26 @@ const makeMove = (position) => {
 
 export default function Game() {
   const { id } = useParams();
+  const hotConnect = useMutation({
+    mutationFn: (id) => {
+      return axios.post(`/api/join-lobby/${id}`);
+    },
+    onSuccess: (response) => {
+      if (response.data.error != undefined) {
+        alert(response.data.error);
+      } else {
+        sessionStorage.setItem("session", response.data.session);
+        sessionStorage.setItem("playing", response.data.playing);
+      }
+    },
+  });
+  if (
+    (sessionStorage.getItem("session") == null ||
+      sessionStorage.getItem("session").split(":")[0] != id) &&
+    !hotConnect.isPending
+  ) {
+    hotConnect.mutate(id);
+  }
   const query = useQuery({
     queryKey: ["lobbyData", { id }],
     queryFn: fetchLobbyData,
@@ -34,6 +54,9 @@ export default function Game() {
   const loading = query.isLoading;
   const result = useMemo(() => {
     const waitingForPlayers = !loading && data.exists && data.isWaiting;
+    const canMove = data?.turn
+      ? data.turn == sessionStorage.getItem("playing")
+      : false;
     return (
       <>
         {waitingForPlayers && (
@@ -52,7 +75,12 @@ export default function Game() {
         )}
         <div className="flex items-center justify-center">
           <div className="grid grid-cols-3">
-            <Player name="You" blurred={waitingForPlayers} />
+            <Player
+              name="You"
+              blurred={waitingForPlayers}
+              playing={sessionStorage.getItem("playing")}
+              waitingForMove={canMove}
+            />
             <div className="flex flex-col gap-4 items-center justify-center h-screen text-center">
               <h3>Game Lobby</h3>
               <TicTacBoard
@@ -61,15 +89,16 @@ export default function Game() {
                     ? data.boardState
                     : ["", "", "", "", "", "", "", "", ""]
                 }
-                isSelectable={
-                  data?.turn
-                    ? data.turn == localStorage.getItem("playing")
-                    : false
-                }
+                isSelectable={canMove}
                 changeTo={mutation.mutate}
               />
             </div>
-            <Player blurred={waitingForPlayers} />
+            <Player
+              blurred={waitingForPlayers}
+              name={waitingForPlayers ? undefined : "Your Opponent"}
+              playing={sessionStorage.getItem("playing") == "x" ? "o" : "x"}
+              waitingForMove={!canMove}
+            />
           </div>
         </div>
         {loading && (
