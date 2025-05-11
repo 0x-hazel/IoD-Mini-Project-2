@@ -1,0 +1,21 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Snapshot test TicTacBoard 1`] = `
+<TicTacBoard
+  boardState={
+    [
+      "",
+      "x",
+      "x",
+      "",
+      "o",
+      "",
+      "",
+      "o",
+      "",
+    ]
+  }
+  changeTo={[Function]}
+  isSelectable={true}
+/>
+`;
