@@ -51,6 +51,15 @@ app
                     exists: true,
                     isWaiting: true,
                 });
+            } else if (lobby.isFinished) {
+                res.json({
+                    exists: true,
+                    isWaiting: false,
+                    isFinished: true,
+                    turn: (lobby.currentPlayer == 0) ? "x" : "o",
+                    winner: lobby.winner,
+                    boardState: lobby.boardState,
+                });
             } else {
                 res.json({
                     exists: true,
