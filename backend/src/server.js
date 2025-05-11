@@ -68,13 +68,14 @@ app
         if (
             lobby.playerCodes[lobby.currentPlayer] == user && !lobby.isWaiting
         ) {
-            if (position && position < 9 && position >= 0) {
+            if (position != null && position < 9 && position >= 0) {
                 if (lobby.boardState[position] != "") {
                     res.json({ error: "This position is already occupied" });
                 } else {
                     lobby.boardState[position] = (lobby.currentPlayer == 0)
                         ? "x"
                         : "o";
+                    lobby.currentPlayer = 1 - lobby.currentPlayer;
                     res.json({ boardState: lobby.boardState });
                 }
             } else {
