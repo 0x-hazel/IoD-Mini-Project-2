@@ -4,8 +4,7 @@
 const VALUES = {
   x: (
     <svg
-      width="800px"
-      height="800px"
+      className="size-32"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -18,8 +17,7 @@ const VALUES = {
   ),
   o: (
     <svg
-      width="800px"
-      height="800px"
+      className="size-32"
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -37,14 +35,17 @@ const VALUES = {
 
 // state: { selectable: boolean, value: string }
 // callback: () => void
-export default function TicTac({ state, callback }) {
+export default function TicTac({ state }) {
   const onClick = state.selectable
     ? () => {
-        callback();
+        state.callback();
       }
     : () => {};
   return (
-    <div onClick={onClick} className="size-24 cursor-pointer">
+    <div
+      onClick={onClick}
+      className={`size-32 ${state.selectable ? "cursor-pointer" : ""}`}
+    >
       {VALUES[state.value]}
     </div>
   );
