@@ -85,6 +85,7 @@ app
                         ? "x"
                         : "o";
                     lobby.currentPlayer = 1 - lobby.currentPlayer;
+                    lobby.checkWin();
                     res.json({ boardState: lobby.boardState });
                 }
             } else {

@@ -32,7 +32,8 @@ function createLobby(isPrivate) {
         for (let state of winningBoardStates) {
             if (
                 this.boardState[state[0]] == this.boardState[state[1]] &&
-                this.boardState[state[1]] == this.boardState[state[2]]
+                this.boardState[state[1]] == this.boardState[state[2]] &&
+                this.boardState[state[2]] != ""
             ) {
                 winner = this.boardState[state[0]];
                 break;

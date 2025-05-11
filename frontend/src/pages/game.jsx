@@ -4,6 +4,7 @@ import axios from "axios";
 import { TicTacBoard } from "../component/tictacBoard";
 import { useMemo } from "react";
 import Player from "../component/player";
+import FinishedMenu from "../component/finishedMenu";
 
 const fetchLobbyData = (queryData) => {
   const [_key, { id }] = queryData.queryKey;
@@ -52,6 +53,7 @@ export default function Game() {
   });
   const data = query.data?.data;
   const loading = query.isLoading;
+
   const result = useMemo(() => {
     const waitingForPlayers = !loading && data.exists && data.isWaiting;
     const canMove = data?.turn
@@ -59,6 +61,7 @@ export default function Game() {
       : false;
     return (
       <>
+        <FinishedMenu visible={data?.isFinished} winner={data?.winner} />
         {waitingForPlayers && (
           <div className="absolute w-screen h-screen backdrop-blur-xs backdrop-brightness-80">
             <div className="flex items-center justify-center h-screen">
@@ -77,7 +80,7 @@ export default function Game() {
           <div className="grid grid-cols-3">
             <Player
               name="You"
-              blurred={waitingForPlayers}
+              blurred={waitingForPlayers || data?.isFinished}
               playing={sessionStorage.getItem("playing")}
               waitingForMove={canMove}
             />
@@ -94,7 +97,7 @@ export default function Game() {
               />
             </div>
             <Player
-              blurred={waitingForPlayers}
+              blurred={waitingForPlayers || data?.isFinished}
               name={waitingForPlayers ? undefined : "Your Opponent"}
               playing={sessionStorage.getItem("playing") == "x" ? "o" : "x"}
               waitingForMove={!canMove}
